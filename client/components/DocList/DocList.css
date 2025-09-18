@@ -1,0 +1,9 @@
+.doc-list {
+  background-color: lightblue;
+  width: 20rem;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  row-gap: 0.5rem;
+  overflow-y: auto;
+}

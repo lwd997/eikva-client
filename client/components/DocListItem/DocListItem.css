@@ -1,0 +1,11 @@
+.doc-list-item {
+  background-color: blue;
+  padding: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.document-file {
+  display: flex;
+  column-gap: 0.5rem;
+}

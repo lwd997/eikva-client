@@ -1,0 +1,22 @@
+.app {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  overflow: hidden;
+}
+
+.work-zone {
+  background-color: yellowgreen;
+  flex-grow: 1;
+  flex-shrink: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.upload-zone {
+  background-color: orange;
+  height: 10rem;
+  padding: 1rem;
+  display: flex;
+  column-gap: 0.5rem;
+}

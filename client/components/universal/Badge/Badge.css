@@ -1,0 +1,17 @@
+.badge {
+  /* base */
+  display: inline-block;
+  /* font */
+  font-size: var(--badge-font-size, calc(var(--font-size, 1em) * 0.75));
+  line-height: 1;
+  font-weight: var(--badge-font-weight, bold);
+  text-align: center;
+  vertical-align: baseline;
+  white-space: nowrap;
+  border-radius: var(--badge-border-radius, var(--border-radius, 0));
+  /* colors */
+  background-color: var(--badge-background-color, hsl(0, 0%, 90%));
+  color: var(--badge-color);
+  /* form */
+  padding: var(--badge-padding-y, 0.35em) var(--badge-padding-x, 0.65em);
+}
