@@ -1,4 +1,12 @@
 .sidebar-item {
-  background-color: orangered;
+  background-color: hsl(0, 0%, 95%);
   padding: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  min-height: 2.8125rem;
+}
+
+.sidebar-item:hover,
+.sidebar-item.active {
+  background-color: hsl(0, 0%, 85%);
 }

@@ -6,7 +6,6 @@
 }
 
 .work-zone {
-  background-color: yellowgreen;
   flex-grow: 1;
   flex-shrink: 1;
   display: flex;
@@ -14,9 +13,8 @@
 }
 
 .upload-zone {
-  background-color: orange;
-  height: 10rem;
-  padding: 1rem;
+  height: 14rem;
+  padding: 1rem 1rem 1rem 0.5rem;
   display: flex;
   column-gap: 0.5rem;
 }

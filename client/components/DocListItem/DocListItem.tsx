@@ -8,7 +8,7 @@ export const DocListItem = () => {
         <Icon name="description" />
         <div className="document-name">Document_01.docx</div>
       </div>
-      <Button icon="close" className="button-square button-small" />
+      <Button icon="delete" className="button-square button-small" />
     </div>
   );
 };
