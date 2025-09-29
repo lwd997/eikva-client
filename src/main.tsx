@@ -7,17 +7,18 @@ import { BrowserRouter } from "react-router-dom";
 import Store from "./store/store.ts";
 
 interface State {
-  store: Store
+  store: Store;
 }
- 
+
 const store = new Store();
 
-export const Context = createContext<State>({ store })
+export const Context = createContext<State>({ store });
 
 createRoot(document.getElementById("root")!).render(
-  <Context.Provider value={{store}}>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+
+    <Context.Provider value={{ store }}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
     </Context.Provider>
 );

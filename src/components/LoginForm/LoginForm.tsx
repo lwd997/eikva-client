@@ -1,11 +1,13 @@
 import { useContext, useState } from "react";
 import { Button, Form, FormLabel } from "react-bootstrap";
 import { Context } from "../../main";
+import { observer } from "mobx-react-lite";
 
-export const LoginForm = () => {
-  const [login, setLogin] = useState("");
-  const [password, setPassword] = useState("");
+export const LoginForm = observer(() => {
+    
   const { store } = useContext(Context);
+  const [log, setLogin] = useState("");
+  const [password, setPassword] = useState("");
 
   return (
     <Form>
@@ -13,7 +15,7 @@ export const LoginForm = () => {
         <FormLabel>Логин</FormLabel>
         <Form.Control
           type="text"
-          value={login}
+          value={log}
           onChange={(e) => setLogin(e.target.value)}
           placeholder="Введите логин"
         />
@@ -31,7 +33,7 @@ export const LoginForm = () => {
         variant="primary"
         size="sm"
         style={{ width: "100%" }}
-        onClick={() => store.login(login, password)}
+        onClick={() => store.login(log, password)}
       >
         Вход
       </Button>
@@ -40,12 +42,12 @@ export const LoginForm = () => {
         variant="secondary"
         size="sm"
         style={{ width: "100%" }}
-        onClick={() => store.register(login, password)}
+        onClick={() => store.register(log, password)}
       >
         Регистрация
       </Button>
     </Form>
   );
-};
+});
 
 export default LoginForm;
