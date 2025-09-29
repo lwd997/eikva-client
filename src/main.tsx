@@ -4,21 +4,18 @@ import "./normalize.css";
 import "./index.css";
 import App from "./App.tsx";
 import { BrowserRouter } from "react-router-dom";
-import Store from "./store/store.ts";
+import { storage } from "./store/store.ts";
 
-interface State {
-  store: Store;
+class RootStore {
+  store = storage;
 }
 
-const store = new Store();
-
-export const Context = createContext<State>({ store });
+export const Context = createContext<RootStore | null>(null);
 
 createRoot(document.getElementById("root")!).render(
-
-    <Context.Provider value={{ store }}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+<BrowserRouter>
+    <Context.Provider value={new RootStore()}>
+        <App />      
     </Context.Provider>
+  </BrowserRouter>
 );

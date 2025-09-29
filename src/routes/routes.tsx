@@ -1,28 +1,14 @@
 import { Route, Routes } from "react-router-dom";
-import { Home } from "../pages/Home";
 import { Login } from "../pages/Login";
-import { GroupTC } from "../pages/GroupTC";
-import { NotFound } from "../pages/NotFound";
-import { PrivateRoute } from "./PrivateRoute";
-import MainLayout from "../components/MainLayout/MainLayout";
+import { ProtectedRoute } from "./protectedRoute";
+import { Main } from "../pages/Main";
+import { observer } from "mobx-react-lite";
 
-export const AppRoutes = () => {
-  const navigationRoutes = [
-    { path: "/", element: <Home /> },
-    { path: "/group-tc/:idGroup", element: <GroupTC /> },
-    { path: "*", element: <NotFound /> },
-  ];
+export const AppRoutes = observer(() => {
   return (
     <Routes>
-      <Route element={<PrivateRoute />}>
-        <Route element={<MainLayout />}>
-          {navigationRoutes.map((route) => (
-            <Route key={route.path} path={route.path} element={route.element} />
-          ))}
-        </Route>
-      </Route>
-      <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<Login/>}/>
+        <Route path="/*" element={<ProtectedRoute><Main /></ProtectedRoute>}/>
     </Routes>
   );
-};
-
+});

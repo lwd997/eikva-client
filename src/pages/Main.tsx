@@ -1,17 +1,19 @@
 import { useState } from "react";
-import { MOCK_SIDEBAR_ITEMS } from "../../assets/mocks";
-import { Sidebar } from "../Sidebar/Sidebar";
-import { Outlet } from "react-router-dom";
+import { Sidebar } from "../components/Sidebar/Sidebar";
+import { MainRoutes } from "../routes/mainRoutes";
+import { MOCK_SIDEBAR_ITEMS } from "../assets/mocks";
 import { observer } from "mobx-react-lite";
 
-
-const MainLayout = observer(() => {
+export const Main = observer(() => {
   const [sidebarItems, setSidebarItems] = useState(MOCK_SIDEBAR_ITEMS.slice());
   const [activeSidebarItemId, setActiveSidebarItemId] = useState(null);
+
   const handleActivateSidebarItem = (sidebarItemId) => {
     setActiveSidebarItemId(sidebarItemId);
   };
+
   const [lastSidebarItemId, setLatSidebarItemId] = useState(10);
+
   const handleDeleteSidebarItem = (sidebarItemId) => {
     setSidebarItems(
       sidebarItems.filter((item) => {
@@ -19,6 +21,7 @@ const MainLayout = observer(() => {
       })
     );
   };
+
   const handleAddSidebarItem = () => {
     setSidebarItems([
       ...sidebarItems,
@@ -29,7 +32,7 @@ const MainLayout = observer(() => {
   };
 
   return (
-    <>
+    <div>
       <Sidebar
         sidebarItems={sidebarItems}
         activeSidebarItemId={activeSidebarItemId}
@@ -38,10 +41,9 @@ const MainLayout = observer(() => {
         handleAddSidebarItem={handleAddSidebarItem}
       />
 
-      <div className="work-zone"></div>
-      <Outlet />
-    </>
+      <div className="work-zone">
+        <MainRoutes />
+      </div>
+    </div>
   );
 });
-
-export default MainLayout;

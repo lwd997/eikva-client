@@ -1,9 +1,11 @@
 import { makeAutoObservable } from "mobx";
-import { login, register, logout } from "../services/AuthService";
+import { login, register, logout, updateToken } from "../services/AuthService";
+// import { useNavigate } from "react-router-dom";
 
-export default class Store {
+export class Store {
   
-  isAuth: boolean = true;
+  isAuth: boolean = false;
+  isLoading: boolean = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -13,27 +15,29 @@ export default class Store {
     this.isAuth = val;
   }
 
-  login = async (loginName: string, password: string) => {
+  setLoading(val: boolean) {
+    this.isLoading = val;
+  }
+
+  login = async (loginName: string, password: string, onNavigate: () => void) => {
     try {
-        console.log('LOGIN ')
       const response = await login(loginName, password);
-      console.log('LOGIN 2')
       localStorage.setItem("access_token", response.data.access_token);
       localStorage.setItem("refresh_token", response.data.refresh_token);
-      console.log('LOGIN 3')
       this.setAuth(true);
-      console.log('LOGIN - ', this.isAuth)
+      onNavigate();
     } catch (error) {
       console.log(error);
     }
   }
 
-  register = async (loginName: string, password: string) => {
+  register = async (loginName: string, password: string, onNavigate: () => void) => {
     try {
       const response = await register(loginName, password);
       localStorage.setItem("access_token", response.data.access_token);
       localStorage.setItem("refresh_token", response.data.refresh_token);
       this.setAuth(true);
+      onNavigate();
     } catch (error) {
       console.log(error);
     }
@@ -49,4 +53,21 @@ export default class Store {
       console.log(error);
     }
   }
+
+  checkAuth = async (refresh_token: string) => {
+    this.setLoading(true);
+    try {
+      const response = await updateToken(refresh_token);
+      console.log('CHECK AUTH - ', response.data)
+      localStorage.setItem("access_token", response.data.access_token);
+      localStorage.setItem("refresh_token", response.data.refresh_token);
+      this.setAuth(true);
+    } catch (error) {
+        console.log(error);
+    } finally {
+        this.setLoading(false);
+    }
+  }
 }
+
+export const storage = new Store();

@@ -1,13 +1,16 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Button, Form, FormLabel } from "react-bootstrap";
-import { Context } from "../../main";
 import { observer } from "mobx-react-lite";
+import { storage } from "../../store/store";
+import { useNavigate } from "react-router-dom";
 
 export const LoginForm = observer(() => {
-    
-  const { store } = useContext(Context);
+  const { login, register } = storage;
+
   const [log, setLogin] = useState("");
   const [password, setPassword] = useState("");
+
+  const navigate = useNavigate();
 
   return (
     <Form>
@@ -33,7 +36,7 @@ export const LoginForm = observer(() => {
         variant="primary"
         size="sm"
         style={{ width: "100%" }}
-        onClick={() => store.login(log, password)}
+        onClick={() => login(log, password, () => navigate('/'))}
       >
         Вход
       </Button>
@@ -42,7 +45,7 @@ export const LoginForm = observer(() => {
         variant="secondary"
         size="sm"
         style={{ width: "100%" }}
-        onClick={() => store.register(log, password)}
+        onClick={() => register(log, password, () => navigate('/'))}
       >
         Регистрация
       </Button>

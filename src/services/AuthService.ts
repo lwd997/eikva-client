@@ -13,3 +13,7 @@ export const register = async ( login: string, password: string) => {
 export const logout = async () => {
     return $api.post<LogoutResponse>('/auth/logout');
 }
+
+export const updateToken = async (refresh_token: string) => {
+    return $api.post<LoginResponse>('/auth/update-tokens', {refresh_token});
+}
