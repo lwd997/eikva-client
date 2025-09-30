@@ -3,6 +3,7 @@
   height: 100vh;
   display: flex;
   overflow: hidden;
+  background: var(--bs-gray-700)
 }
 
 .work-zone {

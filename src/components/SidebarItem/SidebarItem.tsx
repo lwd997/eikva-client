@@ -1,57 +1,68 @@
-import { useEffect, useState } from "react";
-import Button from "../universal/Button/Button";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import "./SidebarItem.css";
-export const SidebarItem = ({
-  title,
-  isActive,
-  handleActivateSidebarItem,
-  handleDeleteSidebarItem,
-  ...props
-}) => {
-  const [showButton, setShowButton] = useState(false);
 
-  return (
-    <div
-      className={isActive ? "sidebar-item active" : "sidebar-item"}
-      onMouseEnter={() => {
-        setShowButton(true);
-      }}
-      onMouseLeave={() => {
-        setShowButton(false);
-      }}
-      onClick={handleActivateSidebarItem}
-    >
-      <div>{title}</div>
-      {(isActive || showButton) && (
-        <div className="dropdown">
-          <Button
-            icon="more_vert"
-            className="button-small button-square"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-            type="button"
-          />
-          <ul className="dropdown-menu">
-            <li>
-              <button className="dropdown-item">Rename</button>
-            </li>
-            <li>
-              <button className="dropdown-item">Save XLSX</button>
-            </li>
-            <li>
-              <button className="dropdown-item">Save DOCX</button>
-            </li>
-            <li>
-              <button
-                className="dropdown-item"
-                onClick={handleDeleteSidebarItem}
-              >
-                Delete Group
-              </button>
-            </li>
-          </ul>
-        </div>
-      )}
-    </div>
-  );
+interface SidebarItemProps {
+    title: string;
+    uuid: string;
+    creator: string;
+    userUUID: string | null;
+    onDelete: (uuid: string) => void;
+    onRename: (name: string, uuid: string) => void;
+}
+
+export const SidebarItem = ({
+    title,
+    uuid,
+    userUUID,
+    creator,
+    onDelete,
+    onRename
+}: SidebarItemProps) => {
+    const [isRenaming, setIsRenaming] = useState(false);
+    const [nextName, setNextName] = useState(title);
+
+    const cancelRename = () => {
+        setNextName(title);
+        setIsRenaming(false);
+    }
+
+    const confirmRename = () => {
+        setIsRenaming(false);
+        onRename(nextName, uuid);
+    }
+
+    return (
+        <Link to={"/" + uuid} className="sidebar-item">
+            {isRenaming
+                ? <input value={nextName} onChange={(e) => setNextName(e.target.value)} />
+                : <div>{title}</div>}
+
+            <div
+                style={{
+                    display: 'flex',
+                    gap: '5px'
+                }}
+            >
+                {userUUID === creator &&
+                    <>
+                        {isRenaming
+                            ?
+                            <>
+                                <button onClick={confirmRename} >Y</button>
+                                <button onClick={cancelRename}>N</button>
+                            </>
+                            :
+                            <>
+                                <button onClick={() => setIsRenaming(true)}>R</button>
+                                <button>S</button>
+                                <button onClick={() => onDelete(uuid)}>D</button>
+                            </>
+                        }
+                    </>
+                }
+
+            </div>
+        </Link>
+    );
 };
