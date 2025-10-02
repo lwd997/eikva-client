@@ -22,27 +22,9 @@ export const Main = () => {
     }, []);
 
     return (
-        <div
-            style={{
-                width: '100%',
-                height: '100%',
-                display: 'flex'
-            }}
-        >
-            <div
-                style={{
-                    width: '30%',
-                    height: '100%',
-                }}
-            >
-                <Sidebar />
-            </div>
-            <div
-                style={{
-                    width: '70%',
-                    height: '100%',
-                }}
-            >
+        <div className="display-flex width-100 height-100">
+            <Sidebar />
+            <div className="content">
                 <Routes>
                     <Route path="/:group" element={<Group />} />
                 </Routes>

@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom"
 import type { TestCase } from "../models/TestCase";
 import { CaseListItem } from "../components/CaseListItem/CaseListItem";
 import { http } from "../http";
+import Button from "../components/universal/Button/Button";
 
 export const Group = () => {
     const { group } = useParams();
@@ -42,10 +43,11 @@ export const Group = () => {
     }, [group]);
 
     return (
-        <div>
-            <button onClick={addTestCase}>+ TC</button>
-            <div>Id groupTC: {group}</div>
+        <div className="display-flex flex-direction-column">
             {testCaseList.map((tc) => <CaseListItem key={tc.uuid} {...tc} />)}
+            <div className="display-flex justify-content-end">
+                <Button onClick={addTestCase}>Добавить новый тест-кейс</Button>
+            </div>
         </div>
     );
 }

@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { TestCase } from "../../models/TestCase";
 import { useDebounceCallback } from "../../hooks/useDebounceCallback";
 import { http } from "../../http";
-import "./CaseListItem.css";
+import Button from "../universal/Button/Button";
 
 export const CaseListItem = ({ ...testCase }: TestCase) => {
     const [state, setState] = useState<TestCase>(testCase);
@@ -30,50 +30,57 @@ export const CaseListItem = ({ ...testCase }: TestCase) => {
     }, 500)
 
     return (
-        <div
-            style={{
-                padding: '5px',
-                border: '1px solid pink'
-            }}
-        >
+        <div className="card display-flex flex-direction-column">
             <div>
-                <div>Название</div>
-                <textarea
+                <input
                     onChange={(e) => onChange("name", e.target.value)}
                     value={state.name}
                 />
             </div>
+            <div>
+                <div className="label">Источник</div>
+                <input
+                    onChange={(e) => onChange("source_ref", e.target.value)}
+                    value={state.source_ref}
+                />
+            </div>
 
             <div>
-                <div>Описание</div>
+                <div className="label">Описание</div>
                 <textarea
+                    rows={10}
+                    className="textarea"
                     onChange={(e) => onChange("description", e.target.value)}
                     value={state.description}
                 />
             </div>
 
-            <div>
-                <div>Предусловие</div>
-                <textarea
-                    onChange={(e) => onChange("pre_condition", e.target.value)}
-                    value={state.pre_condition}
-                />
+            <div className="display-flex width-100">
+                <div className="width-50">
+                    <div className="label">Предусловие</div>
+                    <textarea
+                        rows={5}
+                        className="textarea"
+                        onChange={(e) => onChange("pre_condition", e.target.value)}
+                        value={state.pre_condition}
+                    />
+                </div>
+
+                <div className="width-50">
+                    <div className="label">Постусловие</div>
+                    <textarea
+                        rows={5}
+                        className="textarea"
+                        onChange={(e) => onChange("post_condition", e.target.value)}
+                        value={state.post_condition}
+                    />
+                </div>
             </div>
 
-            <div>
-                <div>Постусловие</div>
-                <textarea
-                    onChange={(e) => onChange("post_condition", e.target.value)}
-                    value={state.post_condition}
-                />
-            </div>
-
-            <div>
-                <div>Источник</div>
-                <textarea
-                    onChange={(e) => onChange("source_ref", e.target.value)}
-                    value={state.source_ref}
-                />
+            <div className="margin-top-1">
+                <Button>
+                    Показать шаги
+                </Button>
             </div>
         </div>
     );

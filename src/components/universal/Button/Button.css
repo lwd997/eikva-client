@@ -1,74 +1,111 @@
 .button {
-  /* base */
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  user-select: none;
-  display: inline-block;
-  /* font */
-  font-family: var(--button-font-family);
-  font-size: var(--button-font-size, var(--font-size, 1rem));
-  line-height: var(--button-line-height, var(--line-height, 1.5));
-  font-weight: var(--button-font-weight);
-  text-decoration: none;
-  text-align: center;
-  vertical-align: middle;
-  /* colors */
-  background-color: var(
-    --button-background-color,
-    var(--accent-color, hsl(0, 0%, 95%))
-  );
-  color: var(--button-color);
-  border-color: var(
-    --button-border-color,
-    var(--border-color, hsl(0, 0%, 50%))
-  );
-  /* form */
-  padding: calc(
-      var(--button-padding-y, var(--padding, 0.375em)) -
-        var(--button-border-width, var(--border-width, 0.0625rem))
-    )
-    calc(
-      (var(--button-padding-y, var(--padding, 0.375em)) * 2) -
-        var(--button-border-width, var(--border-width, 0.0625rem))
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    display: inline-block;
+    font-family: var(--button-font-family);
+    font-size: var(--button-font-size, var(--font-size, 1rem));
+    line-height: var(--button-line-height, var(--line-height, 1.5));
+    font-weight: var(--button-font-weight);
+    text-decoration: none;
+    text-align: center;
+    vertical-align: middle;
+    background-color: var(
+        --button-bg-color,
+        var(--accent-color, hsl(0, 0%, 95%))
     );
-  border-radius: var(--button-border-radius, var(--border-radius));
-  border-width: var(--button-border-width, var(--border-width, 0.0625rem));
-  border-style: var(--button-border-style, var(--border-style, solid));
+    color: var(--button-color);
+    border-color: var(
+        --button-border-color,
+        var(--border-color, hsl(0, 0%, 50%))
+    );
+    padding: calc(
+            var(--button-padding-y, var(--padding, 0.375em)) -
+                var(--button-border-width, var(--border-width, 0.0625rem))
+        )
+        calc(
+            (var(--button-padding-y, var(--padding, 0.375em)) * 2) -
+                var(--button-border-width, var(--border-width, 0.0625rem))
+        );
+    border-radius: var(--button-border-radius, var(--border-radius));
+    border-width: var(--button-border-width, var(--border-width, 0.0625rem));
+    border-style: var(--button-border-style, var(--border-style, solid));
 
-  &:hover {
-    background-color: var(--button-hover-background-color, hsl(0, 0%, 85%));
-  }
+    &:hover {
+        background-color: var(--button-hover-background-color, hsl(0, 0%, 85%));
+    }
 
-  &:active {
-    background-color: var(--button-active-background-color, hsl(0, 0%, 75%));
-  }
+    &:active {
+        background-color: var(
+            --button-active-background-color,
+            hsl(0, 0%, 75%)
+        );
+    }
 }
 
 .button-square {
-  padding-left: calc(
-    var(--button-padding-y, var(--padding, 0.375em)) -
-      var(--button-border-width, var(--border-width, 0.0625rem))
-  );
-  padding-right: calc(
-    var(--button-padding-y, var(--padding, 0.375em)) -
-      var(--button-border-width, var(--border-width, 0.0625rem))
-  );
-  width: calc(
-    var(--button-font-size, var(--font-size, 1em)) *
-      var(--button-line-height, var(--line-height, 1.5)) +
-      var(--button-padding-y, var(--padding, 0.375em)) * 2
-  );
+    display: flex;
+    justify-content: center;
+    padding-left: calc(
+        var(--button-padding-y, var(--padding, 0.375em)) -
+            var(--button-border-width, var(--border-width, 0.0625rem))
+    );
+    padding-right: calc(
+        var(--button-padding-y, var(--padding, 0.375em)) -
+            var(--button-border-width, var(--border-width, 0.0625rem))
+    );
+    width: calc(
+        var(--button-font-size, var(--font-size, 1em)) *
+            var(--button-line-height, var(--line-height, 1.5)) +
+            var(--button-padding-y, var(--padding, 0.375em)) * 2
+    );
 }
 
 .button .icon + * {
-  margin-left: 0.5em;
+    margin-left: 0.5em;
 }
 
 .button-small {
-  font-size: calc(var(--button-font-size, var(--font-size, 1rem)) * 28 / 36);
+    --button-padding-y: 0.3125rem;
+    font-size: calc(var(--button-font-size, var(--font-size, 1rem)) * 3 / 4);
 }
 
 .button-large {
-  font-size: calc(var(--button-font-size, var(--font-size, 1rem)) * 44 / 36);
+    font-size: calc(var(--button-font-size, var(--font-size, 1rem)) * 44 / 36);
+}
+
+.button-small.button-square {
+    --button-padding-y: 0.3125rem;
+    padding-left: calc(
+        var(
+                (--button-padding-y, var(--padding, 0.375em)) -
+                    var(--button-border-width, var(--border-width, 0.0625rem))
+            ) *
+            28 / 36
+    );
+    padding-right: calc(
+        (
+            var(--button-padding-y, var(--padding, 0.375em)) -
+                var(--button-border-width, var(--border-width, 0.0625rem)) *
+                28 / 36
+        )
+    );
+    width: calc(
+        var(--button-font-size, var(--font-size, 1em)) *
+            var(--button-line-height, var(--line-height, 1.5)) * 3 / 4 +
+            var(--button-padding-y, var(--padding, 0.375em)) * 2 +
+            var(--button-border-width, var(--border-width, 0.0625rem)) * 2
+    );
+}
+
+.button.text {
+    background: none;
+    color: var(--button-bg-color);
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.button.text:hover {
+    background: none;
 }

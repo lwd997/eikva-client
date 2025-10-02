@@ -2,6 +2,7 @@ import { useState } from "react";
 import { http } from "../http";
 import type { TokenResponse } from "../models/Auth";
 import { appStore } from "../Storage";
+import Button from "../components/universal/Button/Button";
 
 export const Login = () => {
     const [formType, setFormType] = useState<"login" | "register">("login");
@@ -25,11 +26,11 @@ export const Login = () => {
     }
 
     const toggleFormType = () => {
-        setFormType( formType === "login" ? "register" : "login");
+        setFormType(formType === "login" ? "register" : "login");
     }
 
     return (
-        <>
+        <div>
             {formType}
             <input
                 type="text"
@@ -42,8 +43,8 @@ export const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Введите пароль"
             />
-            <button onClick={handleSubmit}>go</button>
-            <button onClick={toggleFormType}>switch</button>
-        </>
+            <Button onClick={handleSubmit}>go</Button>
+            <Button onClick={toggleFormType}>switch</Button>
+        </div>
     );
 }

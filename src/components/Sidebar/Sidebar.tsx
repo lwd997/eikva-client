@@ -4,7 +4,6 @@ import Button from "../universal/Button/Button";
 import type { TestCaseGroup } from "../../models/TestCase";
 import { http } from "../../http";
 import { appStore } from "../../Storage";
-import "./Sidebar.css";
 
 export const Sidebar = () => {
     const [groupList, setGroupList] = useState<TestCaseGroup[]>([]);
@@ -55,29 +54,24 @@ export const Sidebar = () => {
     }, []);
 
     return (
-        <div className="sidebar">
-            <div className="sidebar-main">
-                <div className="logo">
-                    <div className="logo-image" />
-                    <div className="logo-brand">aIQa (Эйква)</div>
-                </div>
-                <div className="sidebar-groups">
-                    <Button onClick={createGroup}>Create Group</Button>
-                    {groupList.map((g) => (
-                        <SidebarItem
-                            key={g.uuid}
-                            userUUID={store.userUUID}
-                            uuid={g.uuid}
-                            title={g.name}
-                            creator={g.creator_uuid}
-                            onDelete={deleteGroup}
-                            onRename={renameGroup}
-                        />
-                    ))}
-                </div>
+        <div className="sidebar flex-wooden display-flex flex-direction-column overflow-y-hidden">
+            <div className="case-group-list flex-rubber display-flex flex-direction-column overflow-y-auto">
+                {groupList.map((g) => (
+                    <SidebarItem
+                        key={g.uuid}
+                        userUUID={store.userUUID}
+                        uuid={g.uuid}
+                        title={g.name}
+                        creator={g.creator_uuid}
+                        onDelete={deleteGroup}
+                        onRename={renameGroup}
+                    />
+                ))}
             </div>
-            <Button data-bs-toggle="modal" data-bs-target="#signInModal"> </Button>
 
+            <div className="display-flex">
+                <Button onClick={createGroup}>Создать новую группу</Button>
+            </div>
         </div>
     );
 };

@@ -1,0 +1,397 @@
+:root {
+    --font-family: roboto;
+    --font-size: 1rem;
+    --font-weight: normal;
+    --line-height: 1;
+
+    --bg-hue: 270;
+    --bg-saturation: 100%;
+    --bg-lightness: 12%;
+
+    --bg-alpha: 1;
+    --bg: hsla(
+        var(--bg-hue),
+        var(--bg-saturation),
+        var(--bg-lightness),
+        var(--bg-alpha)
+    );
+
+    --color-hue: 0;
+    --color-saturation: 0%;
+    --color-lightness: 100%;
+    --color-alpha: 1;
+    --color: hsl(
+        var(--color-hue),
+        var(--color-saturation),
+        var(--color-lightness),
+        var(--color-alpha)
+    );
+
+    --background-image-url: url("backgrounds/retro_02.jpg");
+    --background-image: var(--background-image-url);
+    --background: var(
+        --bg
+    ); /*var(
+        --background-image,
+        var(--background-gradient, var(--bg))
+    );*/
+
+    --gap: 1rem;
+    --padding: 1rem;
+    --padding-bigger: 1.5rem;
+    --margin: 1rem;
+    --border-radius: 0;
+
+    --icon-color: hsla(270, 100%, 30%, 1);
+
+    --button-line-height: 1.5;
+    --button-padding-y: 0.375em;
+    --button-bg-color: hsla(300, 100%, 75%, 1);
+
+    --button-color: hsla(240, 75%, 0%, 1);
+    --button-border-width: 0em;
+    --button-border-radius: 0.25rem;
+
+    --card-padding: 1rem;
+    --card-border-width: 0;
+    --card-bg-color: hsla(0, 100%, 80%, 0.2);
+    --card-border-radius: 0.5rem;
+    --card-active-bg: hsla(285, 100%, 75%, 0.5);
+
+    --card-backdrop-filter: blur(0.375rem);
+
+    --textarea-padding: 0;
+    --textarea-border-width: 0;
+    --textarea-border-radius: 0.25rem;
+    --textarea-bg: hsla(270, 100%, 12%, 0.5);
+
+    --textarea-active-bg: white;
+    --textarea-active-border-color: blue;
+}
+
+/*--------------------Общепроектные классы--------------------*/
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    transition: all 0.2s;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+html {
+    line-height: var(--line-height);
+}
+
+body {
+    margin: 0;
+    background: center / cover var(--background);
+    color: var(--color);
+    font-family: var(--font-family);
+    font-size: var(--font-size);
+    font-weight: var(--font-weight);
+    line-height: var(--line-height);
+    min-height: 100vh;
+}
+
+.display-flex {
+    display: flex;
+}
+
+.display-flex:not(.flex-direction-column) {
+    flex-direction: row;
+    column-gap: var(--gap, 1rem);
+}
+
+.display-flex.flex-direction-column {
+    flex-direction: column;
+    row-gap: var(--gap, 1rem);
+}
+
+.justify-content-space-between {
+    justify-content: space-between;
+}
+
+.justify-content-center {
+    justify-content: center;
+}
+
+.align-items-center {
+    align-items: center;
+}
+
+.align-items-start {
+    align-items: start;
+}
+
+.overflow-x-hidden {
+    overflow-x: hidden;
+}
+
+.overflow-y-hidden {
+    overflow-y: hidden;
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
+
+.overflow-y-auto {
+    overflow-y: auto;
+}
+
+.width-100 {
+    width: 100%;
+}
+
+.width-50 {
+    width: 50%;
+}
+
+.height-100 {
+    height: 100%;
+}
+
+.position-relative {
+    position: relative;
+}
+
+.position-absolute {
+    position: absolute;
+}
+
+.padding-left-1 {
+    padding-left: 1rem;
+}
+
+.padding-left-2 {
+    padding-left: 2rem;
+}
+
+.margin-left-1 {
+    margin-left: 1rem;
+}
+
+.margin-left-2 {
+    margin-left: 2rem;
+}
+
+.margin-bottom-1 {
+    margin-bottom: 1rem;
+}
+
+.margin-top-1 {
+    margin-top: 1rem;
+}
+
+/*--------------------Авторские классы------------------------*/
+
+.flex-rubber {
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+.flex-wooden {
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
+/*--------------------Части макета----------------------------*/
+
+.app {
+    width: 100vw;
+    height: 100vh;
+}
+
+.sidebar {
+    --padding: 1rem;
+    --button-border-radius: 0.5rem;
+    --gap: 1rem;
+    width: 400px;
+    padding: var(--padding) calc(var(--gap) / 2) var(--padding) var(--padding);
+}
+
+.sidebar-item {
+    --button-border-radius: 0.25rem;
+    min-height: 2.75rem;
+    cursor: pointer;
+}
+
+.card.sidebar-item {
+    padding: 0 1rem;
+}
+
+.logo-image {
+    width: 3rem;
+    height: 3rem;
+    background-color: var(--button-bg-color);
+    border-radius: var(--card-border-radius);
+}
+
+.tutorial-wizard {
+    --padding: 1rem;
+    --card-padding: 1rem;
+    --gap: 0.5rem;
+    padding: var(--padding) var(--padding) 0 calc(var(--gap));
+}
+
+.tutorial-step .icon {
+    font-size: 1.5rem;
+    line-height: 1rem;
+    color: var(--color);
+}
+
+.case-group-list {
+    --gap: 0.5rem;
+}
+
+.case-list {
+    --padding: 1rem;
+    --gap: 1rem;
+    padding: var(--padding) var(--padding) 0 calc(var(--gap) / 2);
+    overflow-y: auto;
+    cursor: pointer;
+}
+
+.case {
+    flex-shrink: 0;
+}
+
+.case.approved {
+    background-color: var(--card-active-bg, hsl(0, 0%, 85%));
+}
+
+.case-header .case-header-actions {
+    column-gap: 0.5rem;
+}
+
+.case-details {
+    --gap: 0.5rem;
+}
+
+.refine-textarea {
+    height: 6rem;
+}
+
+.task-area {
+    --padding: 1rem;
+    --gap: 1rem;
+    height: 14rem;
+    padding: var(--gap) var(--padding) var(--padding) calc(var(--gap) / 2);
+}
+
+input {
+    background-color: var(--textarea-bg);
+    color: var(--color);
+    border: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    height: 42px;
+    width: 100%;
+}
+
+.upload-area {
+    --button-border-radius: 0.5rem;
+    width: 20rem;
+}
+
+.actions-group {
+    --gap: 0.5rem;
+}
+
+.doc-list {
+    --gap: 0.5rem;
+    --button-border-radius: 0.25rem;
+}
+
+.doc-list-item {
+    padding: calc(var(--card-padding) / 2);
+}
+
+.document-file span {
+    color: var(--color);
+}
+
+.card {
+    padding: var(--card-padding, var(--padding, 0.5rem));
+    background-color: var(--card-bg-color, hsl(0, 0%, 92%));
+    color: var(--card-color, var(--color, hsl(0, 0%, 20%)));
+    border-color: var(
+        --card-border-color,
+        var(--border-color, hsl(0, 0%, 80%))
+    );
+    border-style: var(--card-border-style, var(--border-style, solid));
+    border-width: var(--card-border-width, var(--border-width, 0.0625rem));
+    border-radius: var(--card-border-radius, var(--border-radius, 0));
+    backdrop-filter: var(--card-backdrop-filter);
+    /* box-shadow: white 2px 2px 2px 2px; */
+}
+
+.card:hover,
+.card.active {
+    background-color: var(--card-active-bg, hsl(0, 0%, 85%));
+}
+
+.text-ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.text-default,
+.text-default:visited,
+.text-default:hover,
+.text-default:active {
+    color: inherit;
+    text-decoration: none;
+}
+
+.textarea {
+    display: block;
+    width: 100%;
+    background-color: var(--textarea-bg, grey);
+    color: inherit;
+    padding: var(--textarea-padding-y, var(--padding, 1rem))
+        var(--textarea-padding-x, var(--padding, 1rem));
+    font-size: inherit;
+    line-height: var(--line-height);
+    font-weight: inherit;
+    border-color: var(
+        --textarea-border-color,
+        var(--border-color, hsl(0, 0%, 50%))
+    );
+    border-radius: var(--textarea-border-radius, var(--border-radius));
+    border-width: var(--textarea-border-width, var(--border-width, 0.0625rem));
+    border-style: var(--textarea-border-style, var(--border-style, solid));
+    resize: none;
+}
+
+.textarea.active {
+    background-color: var(--textarea-active-bg, grey);
+    border-color: var(
+        --textarea-active-border-color,
+        var(--border-color, hsl(0, 0%, 50%))
+    );
+    border-radius: var(--textarea-active-border-radius, var(--border-radius));
+    border-width: var(
+        --textarea-active-border-width,
+        var(--border-width, 0.0625rem)
+    );
+    border-style: var(
+        --textarea-active-border-style,
+        var(--border-style, solid)
+    );
+}
+
+.content {
+    flex: 1 1 auto;
+    padding: 1rem 2rem 1rem 0;
+}
+
+.label {
+    margin-bottom: 0.5rem;
+}

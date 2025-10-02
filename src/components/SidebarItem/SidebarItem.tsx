@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import "./SidebarItem.css";
+import { Link, useLocation } from "react-router-dom";
+import Button from "../universal/Button/Button";
 
 interface SidebarItemProps {
     title: string;
@@ -21,6 +21,7 @@ export const SidebarItem = ({
 }: SidebarItemProps) => {
     const [isRenaming, setIsRenaming] = useState(false);
     const [nextName, setNextName] = useState(title);
+    const pathname = useLocation().pathname;
 
     const cancelRename = () => {
         setNextName(title);
@@ -32,32 +33,40 @@ export const SidebarItem = ({
         onRename(nextName, uuid);
     }
 
+    /*const onClick:MouseEventHandler<HTMLAnchorElement> = (e) => {
+        if (e.currentTarget.tagName !== 'A') {
+            e.preventDefault();
+        }
+    }*/
+
+    let entryClassName = "card sidebar-item text-default display-flex align-items-center justify-content-space-between";
+    if (pathname.replace("/", "") === uuid) {
+        entryClassName += " active";
+    }
+
     return (
-        <Link to={"/" + uuid} className="sidebar-item">
+        <Link to={"/" + uuid} className={entryClassName}>
             {isRenaming
                 ? <input value={nextName} onChange={(e) => setNextName(e.target.value)} />
-                : <div>{title}</div>}
+                : <div className="text-ellipsis width-100" >{title}</div>}
 
-            <div
-                style={{
-                    display: 'flex',
-                    gap: '5px'
-                }}
-            >
+            <div className="display-flex">
                 {userUUID === creator &&
                     <>
                         {isRenaming
-                            ?
-                            <>
-                                <button onClick={confirmRename} >Y</button>
-                                <button onClick={cancelRename}>N</button>
-                            </>
-                            :
-                            <>
-                                <button onClick={() => setIsRenaming(true)}>R</button>
-                                <button>S</button>
-                                <button onClick={() => onDelete(uuid)}>D</button>
-                            </>
+                            ? (
+                                <>
+                                    <Button className="button-small" onClick={confirmRename}>Y</Button>
+                                    <Button className="button-small" onClick={cancelRename}>N</Button>
+                                </>
+                            )
+                            : (
+                                <>
+                                    <Button className="button-small" onClick={() => setIsRenaming(true)}>R</Button>
+                                    <Button className="button-small">S</Button>
+                                    <Button className="button-small" onClick={() => onDelete(uuid)}>D</Button>
+                                </>
+                            )
                         }
                     </>
                 }
