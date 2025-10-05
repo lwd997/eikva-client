@@ -9,9 +9,11 @@ export interface ApplicationStorage {
 class Store {
     private state: ApplicationStorage;
     private subscribers: Set<Sub> = new Set();
+    private initialState: ApplicationStorage;
 
     constructor(initialState: ApplicationStorage) {
         this.state = initialState;
+        this.initialState = initialState;
 
         this.getSnapshot = this.getSnapshot.bind(this);
         this.subscribe = this.subscribe.bind(this);
@@ -25,6 +27,12 @@ class Store {
     updatePart(s: Partial<ApplicationStorage>) {
         this.state = { ...this.state, ...s };
         this.emit();
+    }
+
+    discard() {
+        this.state = this.initialState;
+        this.state.isAuthorized = false;
+        this.update();
     }
 
     getSnapshot() {

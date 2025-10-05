@@ -1,18 +1,18 @@
 import React from "react";
 import "./Badge.css";
 
-interface BadgeProps
-  extends React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLSpanElement>,
-    HTMLSpanElement
-  > {}
+interface BadgeProps {
+    label: string;
+    value: string;
+}
 
-const Badge: React.FC<BadgeProps> = ({ className, children, ...props }) => {
-  return (
-    <span className={`badge${className ? " " + className : ""}`} {...props}>
-      {children}
-    </span>
-  );
+const Badge: React.FC<BadgeProps> = ({label, value}) => {
+    return (
+        <div className="badge">
+            <div className="badge-label"><span>{label}</span></div>
+            <div className="badge-value"><span>{value}</span></div>
+        </div>
+    );
 };
 
 export default Badge;

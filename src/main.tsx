@@ -3,6 +3,12 @@ import { BrowserRouter } from "react-router-dom";
 import.meta.glob('./styles/*.css', { eager: true });
 import App from "./App.tsx";
 
+declare global {
+    interface WindowEventMap {
+        tcu: CustomEvent<string[]>;
+    }
+}
+
 const root = document.getElementById("root")
 if (!root) {
     throw new Error("На странице отсуствует #root");

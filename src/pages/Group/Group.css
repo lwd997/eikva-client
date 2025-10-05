@@ -1,0 +1,10 @@
+.group {
+    flex: 1 1 auto;
+    overflow: auto;
+}
+
+.add-test-case {
+    flex: 1 1 auto;
+    position: sticky;
+    bottom: 0rem;
+}

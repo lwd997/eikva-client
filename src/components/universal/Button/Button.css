@@ -3,34 +3,20 @@
     -webkit-user-select: none;
     -moz-user-select: none;
     user-select: none;
-    display: inline-block;
     font-family: var(--button-font-family);
     font-size: var(--button-font-size, var(--font-size, 1rem));
-    line-height: var(--button-line-height, var(--line-height, 1.5));
     font-weight: var(--button-font-weight);
     text-decoration: none;
     text-align: center;
     vertical-align: middle;
-    background-color: var(
-        --button-bg-color,
-        var(--accent-color, hsl(0, 0%, 95%))
-    );
+    background-color: var(--button-bg-color);
     color: var(--button-color);
-    border-color: var(
-        --button-border-color,
-        var(--border-color, hsl(0, 0%, 50%))
-    );
-    padding: calc(
-            var(--button-padding-y, var(--padding, 0.375em)) -
-                var(--button-border-width, var(--border-width, 0.0625rem))
-        )
-        calc(
-            (var(--button-padding-y, var(--padding, 0.375em)) * 2) -
-                var(--button-border-width, var(--border-width, 0.0625rem))
-        );
+    border-color: var(--button-border-color);
+    padding: 0 0.5rem;
     border-radius: var(--button-border-radius, var(--border-radius));
     border-width: var(--button-border-width, var(--border-width, 0.0625rem));
     border-style: var(--button-border-style, var(--border-style, solid));
+    height: 32px;
 
     &:hover {
         background-color: var(--button-hover-background-color, hsl(0, 0%, 85%));
@@ -43,6 +29,7 @@
         );
     }
 }
+
 
 .button-square {
     display: flex;
@@ -62,12 +49,8 @@
     );
 }
 
-.button .icon + * {
-    margin-left: 0.5em;
-}
-
 .button-small {
-    --button-padding-y: 0.3125rem;
+    height: 30px;
     font-size: calc(var(--button-font-size, var(--font-size, 1rem)) * 3 / 4);
 }
 
@@ -102,6 +85,7 @@
 .button.text {
     background: none;
     color: var(--button-bg-color);
+    border: none;
     padding-left: 0;
     padding-right: 0;
 }

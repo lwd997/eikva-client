@@ -19,17 +19,12 @@ const Button: React.FC<ButtonProps> = ({
 }) => {
     return (
         <button
-            className={`button${className ? " " + className : ""}`}
+            className={`button display-flex gap-small align-items-center${className ? " " + className : ""}`}
             type={type}
             {...props}
         >
-            {icon && (
-                <>
-                    <Icon name={icon} />
-                    {children && <span>{children}</span>}
-                </>
-            )}
-            {!icon && children}
+            {icon && <Icon name={icon} />}
+            {children && <div>{children}</div>}
         </button>
     );
 };

@@ -48,7 +48,7 @@ export const Login = () => {
 
     return (
         <div className="display-flex width-100 height-100 align-items-center justify-content-center">
-            <div className="login-form display-flex flex-direction-column">
+            <div className="login-form card display-flex flex-direction-column">
                 <label htmlFor="login">Логин</label>
                 <input
                     id="login"

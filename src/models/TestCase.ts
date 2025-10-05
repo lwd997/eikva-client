@@ -31,3 +31,16 @@ export type TestCaseUpdatePayload = Pick<
     "description"
 >
 
+export interface Step {
+    id: number;
+    uuid: string;
+    num: number;
+    creator: string;
+    creator_uuid: string;
+    test_case: string;
+    created_at: string;
+    status: string;
+    data: string;
+    description: string;
+    expected_result: string;
+}

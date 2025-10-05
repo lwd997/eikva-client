@@ -1,17 +1,32 @@
 .badge {
-  /* base */
-  display: inline-block;
-  /* font */
-  font-size: var(--badge-font-size, calc(var(--font-size, 1em) * 0.75));
-  line-height: 1;
-  font-weight: var(--badge-font-weight, bold);
-  text-align: center;
-  vertical-align: baseline;
-  white-space: nowrap;
-  border-radius: var(--badge-border-radius, var(--border-radius, 0));
-  /* colors */
-  background-color: var(--badge-background-color, hsl(0, 0%, 90%));
-  color: var(--badge-color);
-  /* form */
-  padding: var(--badge-padding-y, 0.35em) var(--badge-padding-x, 0.65em);
+    display: flex;
+    white-space: nowrap;
+    border-radius: var(--badge-border-radius, var(--border-radius, 0));
+    color: var(--badge-color);
+    height: 30px;
+}
+
+.badge-value, .badge-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.badge-label {
+    padding-left: 0.5rem;
+    padding-right: 0.25rem;
+    border-top-left-radius: 1rem;
+    border-bottom-left-radius: 1rem;
+    background: var(--button-bg-color);
+}
+
+
+.badge-value {
+    padding-left: 0.25rem;
+    padding-right: 0.5rem;
+    border-top-right-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+    background: var(--button-hover-background-color);
+    color: var(--button-color);
 }

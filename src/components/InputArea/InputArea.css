@@ -1,0 +1,85 @@
+.input-area {
+}
+
+.input-area .textarea {
+    flex: 1 1 auto;
+}
+
+.show-input-area-container {
+    position: relative;
+    height: 0;
+}
+
+.show-input-area-button {
+    position: absolute;
+    animation: 0.2s cool-disappearance forwards;
+}
+
+.hide-input-area-button {
+    position: relative;
+    animation: 0.2s cool-appearance forwards;
+}
+
+.input-area-dropzone {
+    flex: 1 1 auto;
+    height: 100%;
+    border: 1px dashed;
+    border-radius: var(--button-border-radius);
+    cursor: pointer;
+}
+
+.filezone {
+    height: 400px;
+    width: 100%;
+    padding: 0.25rem;
+}
+
+.file {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--card-bg-color);
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.5rem;
+}
+
+.file-side {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+}
+
+.file-panel {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    overflow-y: auto;
+    max-height: 100%;
+}
+
+.preview {
+    white-space: pre-wrap;
+    width: 800px;
+    flex: 0 0 auto;
+    max-width: 50%;
+    overflow: auto;
+}
+
+@keyframes cool-disappearance {
+    from {
+        top: -10px;
+    }
+    to {
+        top: -49px;
+    }
+}
+
+
+@keyframes cool-appearance {
+    from {
+        top: -20px;
+    }
+    to {
+        top: 0;
+    }
+}

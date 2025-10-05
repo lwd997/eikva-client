@@ -1,18 +1,82 @@
-import { useState } from "react";
-import type { TestCase } from "../../models/TestCase";
+import { useEffect, useState } from "react";
+import type { Step, TestCase } from "../../models/TestCase";
 import { useDebounceCallback } from "../../hooks/useDebounceCallback";
 import { http } from "../../http";
+import { Steps } from "../../pages/Group/Steps/Steps";
+import Badge from "../universal/Badge/Badge";
 import Button from "../universal/Button/Button";
 
-export const CaseListItem = ({ ...testCase }: TestCase) => {
+type CaseListItemProps = TestCase & {
+    userUUID: string | null;
+    onDelete: (tcUUID: string) => void;
+}
+
+export const CaseListItem = ({ userUUID, onDelete, ...testCase }: CaseListItemProps) => {
     const [state, setState] = useState<TestCase>(testCase);
+    const [steps, setSteps] = useState<Step[]>([]);
+    const [isStepsLoading, setIsStepsLoading] = useState(false);
+    const [isStepsLoaded, setIsStepsLoaded] = useState(false);
+    const [isDeleteConfirm, setIsDeleteConfirm] = useState(false);
+
+    const [isExpanded, setIsExpanded] = useState(false);
+    const isCreatedByUser = state.creator_uuid === userUUID;
+
+    useEffect(() => {
+        const listener = (e: CustomEvent<string[]>) => {
+            if (e.detail.includes(state.uuid)) {
+                getSelf();
+            }
+        }
+
+        window.addEventListener('tcu', listener);
+        return () => {
+            window.removeEventListener('tcu', listener);
+        }
+
+    }, [state.uuid, isExpanded, isStepsLoaded]);
+
+    const getSelf = async () => {
+        if (isExpanded || isStepsLoaded) {
+            console.log("??")
+            getSteps();
+        }
+
+        const response = await http.request<TestCase>("/test-cases/get/" + state.uuid);
+        if (response.status === 200) {
+            setState(response.body);
+        }
+    };
+
+    const badges = [
+        { label: "Автор", value: state.creator },
+        { label: "Дата создания", value: state.created_at },
+        { label: "Статус", value: state.status }
+    ];
+
+    if (isCreatedByUser) {
+        badges[0].value += " (Это вы)"
+    }
+
+    const toggleDeleteConfirm = () => setIsDeleteConfirm(!isDeleteConfirm);
+
+    const toggleExpand = () => {
+        if (!isStepsLoaded) {
+            getSteps();
+        }
+
+        setIsExpanded(!isExpanded);
+    }
 
     const onChange = <T extends keyof TestCase>(field: T, value: TestCase[T]) => {
+        if (!isCreatedByUser) {
+            return;
+        }
+
         setState((s) => {
             s = { ...s, [field]: value };
             sync(s);
             return s;
-        })
+        });
     }
 
     const sync = useDebounceCallback((tc: TestCase) => {
@@ -27,61 +91,130 @@ export const CaseListItem = ({ ...testCase }: TestCase) => {
                 source_ref: tc.source_ref
             }
         });
-    }, 500)
+    }, 500);
+
+    const getSteps = async () => {
+        if (isStepsLoading) {
+            return;
+        }
+
+        setIsStepsLoading(true);
+        const response = await http.request<{ steps: Step[] }>("/test-cases/get-steps/" + state.uuid);
+        setIsStepsLoading(false);
+
+        if (response.status === 200) {
+            setSteps(response.body.steps);
+            setIsStepsLoaded(true);
+        }
+    }
+
+    const addTestCase = async () => {
+        const response = await http.request<Step>("/steps/add", {
+            method: "POST",
+            body: {
+                test_case: state.uuid
+            }
+        });
+
+        if (response.status === 200) {
+            setSteps([...steps, response.body]);
+        }
+    }
 
     return (
         <div className="card display-flex flex-direction-column">
-            <div>
-                <input
-                    onChange={(e) => onChange("name", e.target.value)}
-                    value={state.name}
-                />
-            </div>
-            <div>
-                <div className="label">Источник</div>
-                <input
-                    onChange={(e) => onChange("source_ref", e.target.value)}
-                    value={state.source_ref}
-                />
-            </div>
-
-            <div>
-                <div className="label">Описание</div>
-                <textarea
-                    rows={10}
-                    className="textarea"
-                    onChange={(e) => onChange("description", e.target.value)}
-                    value={state.description}
-                />
-            </div>
-
-            <div className="display-flex width-100">
-                <div className="width-50">
-                    <div className="label">Предусловие</div>
-                    <textarea
-                        rows={5}
-                        className="textarea"
-                        onChange={(e) => onChange("pre_condition", e.target.value)}
-                        value={state.pre_condition}
-                    />
+            <h1>{state.name}</h1>
+            <div className="display-flex align-items-center justify-content-space-between">
+                <div className="display-flex align-items-center">
+                    {badges.map((badge, i) => <Badge key={i} label={badge.label} value={badge.value} />)}
                 </div>
+                <div className="display-flex align-items-center">
+                    {isCreatedByUser &&
+                        <>
+                            {isDeleteConfirm
+                                ? (
+                                    <>
+                                        <Button onClick={() => onDelete(state.uuid)} icon="delete_forever">Да, удалить!</Button>
+                                        <Button onClick={toggleDeleteConfirm}>Не удалять</Button>
+                                    </>
+                                )
+                                : <Button icon="delete" onClick={toggleDeleteConfirm}>Удалить</Button>
+                            }
+                        </>
+                    }
 
-                <div className="width-50">
-                    <div className="label">Постусловие</div>
-                    <textarea
-                        rows={5}
-                        className="textarea"
-                        onChange={(e) => onChange("post_condition", e.target.value)}
-                        value={state.post_condition}
-                    />
+                    {isExpanded
+                        ? <Button onClick={toggleExpand} icon="collapse_content">Свернуть</Button>
+                        : <Button onClick={toggleExpand} icon="expand_content">Подробнее</Button>
+                    }
                 </div>
             </div>
+            {isExpanded &&
+                <>
+                    <div>
+                        <input
+                            disabled={!isCreatedByUser}
+                            onChange={(e) => onChange("name", e.target.value)}
+                            value={state.name}
+                        />
+                    </div>
+                    <div>
+                        <div className="label">Источник</div>
+                        <input
+                            disabled={!isCreatedByUser}
+                            onChange={(e) => onChange("source_ref", e.target.value)}
+                            value={state.source_ref}
+                        />
+                    </div>
 
-            <div className="margin-top-1">
-                <Button>
-                    Показать шаги
-                </Button>
-            </div>
+                    <div>
+                        <div className="label">Описание</div>
+                        <textarea
+                            rows={10}
+                            className="textarea"
+                            disabled={!isCreatedByUser}
+                            onChange={(e) => onChange("description", e.target.value)}
+                            value={state.description}
+                        />
+                    </div>
+
+                    <div className="display-flex width-100">
+                        <div className="width-50">
+                            <div className="label">Предусловие</div>
+                            <textarea
+                                rows={5}
+                                className="textarea"
+                                disabled={!isCreatedByUser}
+                                onChange={(e) => onChange("pre_condition", e.target.value)}
+                                value={state.pre_condition}
+                            />
+                        </div>
+
+                        <div className="width-50">
+                            <div className="label">Постусловие</div>
+                            <textarea
+                                rows={5}
+                                className="textarea"
+                                disabled={!isCreatedByUser}
+                                onChange={(e) => onChange("post_condition", e.target.value)}
+                                value={state.post_condition}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="margin-top-1">
+                        <Steps
+                            rewriteSteps={setSteps}
+                            isCreatedByUser={isCreatedByUser}
+                            addTestCase={addTestCase}
+                            isStepsLoaded={isStepsLoaded}
+                            isLoading={isStepsLoading}
+                            retryHandler={getSteps}
+                            steps={steps}
+                        />
+                    </div>
+                </>
+            }
         </div>
     );
 };

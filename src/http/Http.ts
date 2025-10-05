@@ -1,8 +1,9 @@
 import { type TokenResponse } from "../models/Auth";
+import { createErrorToast } from "../Toast";
 
 interface HttpRequestInit extends Omit<RequestInit, 'headers' | 'body'> {
     headers?: Record<string, string>;
-    body?: Record<string, unknown> | string;
+    body?: Record<string, unknown> | string | FormData;
 }
 
 type HttpBadStatus = 400 | 401 | 403 | 404 | 500;
@@ -26,9 +27,11 @@ interface HttpConstructor {
     onUpdateTokenFail?: (h: Http) => void;
 }
 
+
 export class Http {
-    public isPaued: boolean = false;
     public readonly baseUrl: string;
+    private isRefreshing: boolean;
+    private refreshPromise: Promise<void> | null;
 
     public accessToken: string | null;
     public refreshToken: string | null;
@@ -36,6 +39,8 @@ export class Http {
 
     constructor(config: HttpConstructor) {
         this.baseUrl = config.baseUrl;
+        this.isRefreshing = false;
+        this.refreshPromise = null;
         this.accessToken = config.accessToken;
         this.refreshToken = config.refreshToken;
         this.onUpdateTokenFail = config.onUpdateTokenFail || null;
@@ -45,7 +50,7 @@ export class Http {
         this.accessToken = access_token;
         this.refreshToken = refresh_token;
         localStorage.setItem("access_token", access_token);
-        localStorage.setItem("refresh_token", access_token)
+        localStorage.setItem("refresh_token", refresh_token);
     }
 
     deleteTokens() {
@@ -53,57 +58,108 @@ export class Http {
         localStorage.removeItem("refresh_token");
     }
 
-    async request<T extends object>(path: string, options: HttpRequestInit = {}): Promise<HttpResponse<T>> {
+    private async waitForRefresh(): Promise<void> {
+        if (this.isRefreshing && this.refreshPromise) {
+            await this.refreshPromise;
+        }
+    }
+
+    private async refreshTokens(): Promise<void> {
+        if (this.isRefreshing) {
+            return this.waitForRefresh();
+        }
+
+        this.isRefreshing = true;
+        this.refreshPromise = (async () => {
+            try {
+                const refreshResponse = await this.request<TokenResponse>(
+                    "/auth/update-tokens",
+                    {
+                        method: "POST",
+                        body: { refresh_token: this.refreshToken },
+                    }
+                );
+
+                if (refreshResponse.status === 200) {
+                    this.updateTokens(refreshResponse.body);
+                } else {
+                    throw new Error("Refresh failed");
+                }
+            } catch (err) {
+                console.error("Token refresh failed:", err);
+                this.deleteTokens();
+                this.onUpdateTokenFail?.(this);
+                throw err;
+            } finally {
+                this.isRefreshing = false;
+                this.refreshPromise = null;
+            }
+        })();
+
+        await this.refreshPromise;
+    }
+
+    async request<T extends object>(
+        path: string,
+        options: HttpRequestInit = {}
+    ): Promise<HttpResponse<T>> {
         if (!options.headers) {
             options.headers = {};
         }
 
-        options.headers["Content-Type"] = "application/json";
+        if (!options.headers["Content-Type"] && !(options.body instanceof FormData)) {
+            options.headers["Content-Type"] = "application/json";
+        }
 
         if (this.accessToken) {
             options.headers["Authorization"] = "Bearer " + this.accessToken;
         }
 
-        if (options.body && typeof options.body !== "string") {
-            options.body = JSON.stringify(options.body)
+        if (options.body && typeof options.body !== "string" && !(options.body instanceof FormData)) {
+            options.body = JSON.stringify(options.body);
         }
 
-        const resp = await fetch(path, options as RequestInit);
+        await this.waitForRefresh();
+
+        const resp = await fetch(this.baseUrl + path, options as RequestInit);
 
         if (resp.status === 401 && path !== "/auth/update-tokens") {
-            this.isPaued = true;
-            const refreshResponse = await this.request<TokenResponse>("/auth/update-tokens", {
-                method: "POST",
-                body: { refresh_token: this.refreshToken }
-            });
-
-            if (refreshResponse.status === 200) {
-                this.updateTokens(refreshResponse.body);
-            } else {
-                if (typeof this.onUpdateTokenFail === 'function') {
-                    this.onUpdateTokenFail(this);
-                }
-
-                return {
-                    status: 401,
-                    body: null
-                }
+            try {
+                await this.refreshTokens();
+            } catch {
+                return { status: 401, body: null };
             }
 
-            this.isPaued = false;
+            options.headers["Authorization"] = "Bearer " + this.accessToken;
+            const retryResp = await fetch(this.baseUrl + path, options as RequestInit);
+
+            if (!retryResp.headers.get("Content-Type")?.includes("application/json")) {
+                return { status: 500, body: null };
+            }
+
+            const retryBody = await retryResp.json();
+            return { status: retryResp.status as HttpBadStatus | 200, body: retryBody };
         }
 
         if (!resp.headers.get("Content-Type")?.includes("application/json")) {
-            return {
-                status: 500,
-                body: null
-            };
+            return { status: 500, body: null };
+        }
+
+        const body = await resp.json();
+
+        if (typeof body.error === "string") {
+            createErrorToast(body.error);
+        } else if (Array.isArray(body.form_errors)) {
+            for (const fe of body.form_errors) {
+                createErrorToast(fe.error);
+            }
         }
 
         return {
             status: resp.status as HttpBadStatus | 200,
-            body: await resp.json()
-        }
+            body,
+        };
     }
 }
+
 
