@@ -5,7 +5,8 @@ import App from "./App.tsx";
 
 declare global {
     interface WindowEventMap {
-        tcu: CustomEvent<string[]>;
+        "test-case-update": CustomEvent<string[]>;
+        "upload-update": CustomEvent<string[]>;
     }
 }
 

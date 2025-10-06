@@ -6,8 +6,8 @@ import { useDropzone } from "react-dropzone";
 import Icon from "../universal/Icon/Icon";
 import type { UploadedFile } from "../../models/File";
 import { FileElement, FileElementSelected } from "./File";
-import "./InputArea.css";
 import { createErrorToast } from "../../Toast";
+import "./InputArea.css";
 
 interface InputAreaPorps {
     currentUserUUID: string;
@@ -22,6 +22,31 @@ export const InputArea = ({ addTestCases, testCaseGroupUUID, currentUserUUID }: 
     const [isHidden, setIsHidden] = useState(true);
     const [outputCount, setOutputCount] = useState(5);
     const [preview, setPreview] = useState("");
+
+    useEffect(() => {
+        const listener = async (e: CustomEvent<string[]>) => {
+
+            const localUUIDs = e.detail.filter((el) => fileList.some((f) => f.uuid === el));
+            if (localUUIDs.length) {
+                const updates = await Promise.all(localUUIDs.map(getFileInfo));
+
+                setFileList(fileList.map((el) => {
+                    const match = updates.find((u) => u?.uuid === el.uuid);
+                    if (match) {
+                        el = match;
+                    }
+
+                    return el;
+                }));
+            }
+        }
+
+        window.addEventListener('upload-update', listener);
+        return () => {
+            window.removeEventListener('upload-update', listener);
+        }
+
+    }, [fileList]);
 
     useEffect(() => {
         getGroupFiles();
@@ -132,6 +157,13 @@ export const InputArea = ({ addTestCases, testCaseGroupUUID, currentUserUUID }: 
         }
     };
 
+    const compressFile = (uuid: string) => {
+        http.request("/uploads/compress", {
+            method: "POST",
+            body: { uuid }
+        });
+    }
+
     const toggleIsHidden = () => setIsHidden(!isHidden);
 
     if (isHidden) {
@@ -175,7 +207,7 @@ export const InputArea = ({ addTestCases, testCaseGroupUUID, currentUserUUID }: 
                                     key={f.uuid}
                                     currentUserUUID={currentUserUUID}
                                     onSelect={selectFileForRequest}
-                                    onCompress={() => { }}
+                                    onCompress={compressFile}
                                     onDelete={() => { }}
                                     onPreview={previewFile}
                                     {...f}

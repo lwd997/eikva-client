@@ -14,8 +14,8 @@ export const Group = () => {
     const { userUUID } = useSyncExternalStore(appStore.subscribe, appStore.getSnapshot);
     const [testCaseList, setTestCaseList] = useState<TestCase[]>([]);
 
-    useWebsocketUpdate((updateList) => {
-        window.dispatchEvent(new CustomEvent('tcu', {
+    useWebsocketUpdate((type, updateList) => {
+        window.dispatchEvent(new CustomEvent(type, {
             detail: updateList
         }));
     });

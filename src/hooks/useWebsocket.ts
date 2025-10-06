@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { http } from "../http";
 import { createErrorToast } from "../Toast";
 
-export const useWebsocketUpdate = (onUpdate: (updateList: string[]) => void) => {
+export const useWebsocketUpdate = (onUpdate: (type: string, updateList: string[]) => void) => {
     useEffect(() => {
         const socket = new WebSocket(
             `${window.location.protocol === "http:" ? "ws" : "wss"}://${window.location.host}/ws`
@@ -18,11 +18,14 @@ export const useWebsocketUpdate = (onUpdate: (updateList: string[]) => void) => 
         socket.onmessage = (event) => {
             try {
                 const mesasge: { type: string; uuid: string[] } = JSON.parse(event.data);
-                if (mesasge.type !== "test-case-update") {
+                if (
+                    mesasge.type !== "test-case-update" &&
+                    mesasge.type !== "upload-update"
+                ) {
                     throw new Error("Неизвестный тип сообщения WebSocket");
                 }
 
-                onUpdate(mesasge.uuid);
+                onUpdate(mesasge.type, mesasge.uuid);
             } catch (error) {
                 const errorMessage = error instanceof Error
                     ? error.message

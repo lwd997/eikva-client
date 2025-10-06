@@ -28,9 +28,9 @@ export const CaseListItem = ({ userUUID, onDelete, ...testCase }: CaseListItemPr
             }
         }
 
-        window.addEventListener('tcu', listener);
+        window.addEventListener('test-case-update', listener);
         return () => {
-            window.removeEventListener('tcu', listener);
+            window.removeEventListener('test-case-update', listener);
         }
 
     }, [state.uuid, isExpanded, isStepsLoaded]);

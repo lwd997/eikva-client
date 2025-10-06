@@ -19,6 +19,7 @@ export const FileElement = ({
 }: FileElementProps) => {
     return (
         <div className="file">
+            {file.status}
             <div className="file" onClick={() => onSelect(file)}>
                 <Icon name="docs"/>
                 <div>{file.name}</div>
