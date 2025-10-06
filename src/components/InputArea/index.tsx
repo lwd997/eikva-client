@@ -6,7 +6,6 @@ import { useDropzone } from "react-dropzone";
 import Icon from "../universal/Icon/Icon";
 import type { UploadedFile } from "../../models/File";
 import { FileElement, FileElementSelected } from "./File";
-import { createErrorToast } from "../../Toast";
 import "./InputArea.css";
 
 interface InputAreaPorps {
@@ -51,6 +50,22 @@ export const InputArea = ({ addTestCases, testCaseGroupUUID, currentUserUUID }: 
     useEffect(() => {
         getGroupFiles();
     }, [testCaseGroupUUID]);
+
+    const onDrop = async (files: File[]) => {
+        if (!files.length) {
+            return;
+        }
+
+        const uploads = await uploadFiles(files)
+        setFileList([
+            ...fileList,
+            ...uploads.filter(Boolean) as never[]
+        ]);
+    }
+
+    const { getRootProps, getInputProps } = useDropzone({
+        onDrop
+    });
 
     const selectFileForRequest = (f: UploadedFile) => {
         if (!selectedFileList.some((s) => s.uuid === f.uuid)) {
@@ -120,26 +135,16 @@ export const InputArea = ({ addTestCases, testCaseGroupUUID, currentUserUUID }: 
         return [];
     }
 
-    const onDrop = async (files: File[]) => {
-        const filesPrep = files.filter((el) => el.type.startsWith("text/"))
-        if (filesPrep.length < files.length) {
-            createErrorToast("Пока что поддерживаюся только текстовые файлы");
-        }
+    const deleteFile = async (uuid: string) => {
+        const response = await http.request("/uploads/delete", {
+            method: "POST",
+            body: { uuid }
+        });
 
-        if (!filesPrep.length) {
-            return;
+        if (response.status === 200) {
+            setFileList(fileList.filter((f) => f.uuid !== uuid));
         }
-
-        const uploads = await uploadFiles(filesPrep)
-        setFileList([
-            ...fileList,
-            ...uploads.filter(Boolean) as never[]
-        ]);
     }
-
-    const { getRootProps, getInputProps } = useDropzone({
-        onDrop
-    });
 
     const generate = async () => {
         const response = await http.request<{ test_cases: TestCase[] }>("/test-cases/start-generation", {
@@ -208,7 +213,7 @@ export const InputArea = ({ addTestCases, testCaseGroupUUID, currentUserUUID }: 
                                     currentUserUUID={currentUserUUID}
                                     onSelect={selectFileForRequest}
                                     onCompress={compressFile}
-                                    onDelete={() => { }}
+                                    onDelete={deleteFile}
                                     onPreview={previewFile}
                                     {...f}
                                 />

@@ -26,6 +26,7 @@ export const FileElement = ({
             </div>
             <Icon name="compress" onClick={() => onCompress(file.uuid)}/>
             <Icon name="search" onClick={() => onPreview(file.uuid)}/>
+            <Icon name="close" onClick={() => onDelete(file.uuid)}/>
         </div>
     );
 }
