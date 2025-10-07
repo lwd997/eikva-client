@@ -23,9 +23,9 @@ export const Steps = ({
     isStepsLoaded,
     isLoading,
     isCreatedByUser,
-    rewriteSteps,
     retryHandler,
-    addTestCase
+    addTestCase,
+    rewriteSteps
 }: StepsProps) => {
     const [isExpanded, setIsExpanded] = useState(true);
     const sensors = useSensors(
@@ -39,8 +39,8 @@ export const Steps = ({
         setIsExpanded(!isExpanded);
     }
 
-    const swapSteps = (first: string, second: string) => {
-        http.request("/steps/swap", {
+    const swapSteps = async (first: string, second: string) => {
+        await http.request("/steps/swap", {
             method: "POST",
             body: {
                 first,
@@ -61,13 +61,12 @@ export const Steps = ({
             body: { uuid: stepUUID }
         });
 
-        // TODO: Пересчитать num на фронте?
         if (response.status === 200) {
             retryHandler();
         }
     }
 
-    const handleDragEnd = (event: DragEndEvent) => {
+    const handleDragEnd = async (event: DragEndEvent) => {
         const { active, over } = event;
 
         if (active.id !== over?.id) {
@@ -78,8 +77,9 @@ export const Steps = ({
                 const secondNum = steps[secondIndex].num;
                 steps[firstIndex].num = secondNum;
                 steps[secondIndex].num = firstNum;
-                swapSteps(steps[firstIndex].uuid, steps[secondIndex].uuid);
                 rewriteSteps(arrayMove(steps, firstIndex, secondIndex));
+                await swapSteps(steps[firstIndex].uuid, steps[secondIndex].uuid);
+                retryHandler()
             }
         }
     }
@@ -87,10 +87,14 @@ export const Steps = ({
     return (
         <div className="display-flex flex-direction-column">
             <div>
-                {isExpanded
-                    ? <Button onClick={toggleExpaned} icon="footprint">Скрыть шаги</Button>
-                    : <Button onClick={toggleExpaned} icon="footprint">Показать шаги</Button>
-                }
+                <Button
+                    className="text row-reverse"
+                    onClick={toggleExpaned}
+                    icon={isExpanded ? "keyboard_arrow_up" : "keyboard_arrow_down"}
+                >
+                    Шаги
+                </Button>
+
             </div>
 
             {isExpanded &&
@@ -160,7 +164,7 @@ export const Steps = ({
 
                     {isCreatedByUser &&
                         <div className="display-flex justify-content-end">
-                            <Button onClick={addTestCase} icon="add">Добавить шаг</Button>
+                            <Button className="text" onClick={addTestCase} icon="add">Добавить шаг</Button>
                         </div>
                     }
                 </div>

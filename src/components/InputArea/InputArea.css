@@ -1,4 +1,6 @@
 .input-area {
+    width: 1100px;
+    z-index: 4;
 }
 
 .input-area .textarea {
@@ -7,7 +9,9 @@
 
 .show-input-area-container {
     position: relative;
+    width: 1100px;
     height: 0;
+    margin-top: 2rem;
 }
 
 .show-input-area-button {
@@ -35,12 +39,33 @@
 }
 
 .file {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 5px;
     background: var(--card-bg-color);
     padding: 0.2rem 0.5rem;
     border-radius: 0.5rem;
+    height: 2rem;
+}
+
+.fc {
+    padding-left: 0;
+}
+
+.fc.selected  .file {
+    color: var(--teal);
+}
+
+.fc .file div {
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.file .icon,
+.file .file {
+    cursor: pointer;
 }
 
 .file-side {
@@ -50,11 +75,21 @@
 }
 
 .file-panel {
+    padding: 3px;
     display: flex;
     gap: 5px;
     flex-wrap: wrap;
     overflow-y: auto;
+    min-height: 2rem;
     max-height: 100%;
+}
+
+.selected-files {
+    max-width: 630px;
+    padding: 3px;
+    display: flex;
+    gap: 5px;
+    overflow-x: auto;
 }
 
 .preview {
@@ -70,7 +105,7 @@
         top: -10px;
     }
     to {
-        top: -49px;
+        top: -32px;
     }
 }
 

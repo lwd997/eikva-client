@@ -49,8 +49,7 @@ export const Sidebar = () => {
 
     const createGroup = async () => {
         const response = await http.request<TestCaseGroup>("/groups/add", {
-            method: "POST",
-            body: { name: "Новая группа" }
+            method: "POST"
         });
 
         if (response.status === 200) {

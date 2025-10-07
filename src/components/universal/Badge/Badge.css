@@ -1,9 +1,8 @@
 .badge {
     display: flex;
     white-space: nowrap;
-    border-radius: var(--badge-border-radius, var(--border-radius, 0));
-    color: var(--badge-color);
-    height: 30px;
+    color: var(--color);
+    opacity: 0.8;
 }
 
 .badge-value, .badge-label {
@@ -14,19 +13,10 @@
 }
 
 .badge-label {
-    padding-left: 0.5rem;
     padding-right: 0.25rem;
-    border-top-left-radius: 1rem;
-    border-bottom-left-radius: 1rem;
-    background: var(--button-bg-color);
+    border-right: 1px solid var(--color);
 }
-
 
 .badge-value {
     padding-left: 0.25rem;
-    padding-right: 0.5rem;
-    border-top-right-radius: 1rem;
-    border-bottom-right-radius: 1rem;
-    background: var(--button-hover-background-color);
-    color: var(--button-color);
 }

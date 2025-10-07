@@ -10,7 +10,8 @@ export const Login = () => {
     const [login, setLogin] = useState("");
     const [password, setPassword] = useState("");
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
         const requestPath = formType === "login"
             ? "/auth/login"
             : "/auth/register"
@@ -47,8 +48,11 @@ export const Login = () => {
 
 
     return (
-        <div className="display-flex width-100 height-100 align-items-center justify-content-center">
+        <form onSubmit={handleSubmit} className="display-flex width-100 height-100 align-items-center justify-content-center">
             <div className="login-form card display-flex flex-direction-column">
+                <div className="logo">
+                    <img src="/TestCraft.svg" />
+                </div>
                 <label htmlFor="login">Логин</label>
                 <input
                     id="login"
@@ -66,10 +70,10 @@ export const Login = () => {
                 />
 
                 <div className="display-flex align-items-center justify-content-end">
-                    <Button className="text" onClick={toggleFormType}>{secondaryBtnTitle}</Button>
-                    <Button onClick={handleSubmit}>{actionBtnTitle}</Button>
+                    <Button type="button" className="text" onClick={toggleFormType}>{secondaryBtnTitle}</Button>
+                    <Button type="submit">{actionBtnTitle}</Button>
                 </div>
             </div>
-        </div>
+        </form>
     );
 }

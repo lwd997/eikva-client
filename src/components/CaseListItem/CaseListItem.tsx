@@ -5,6 +5,8 @@ import { http } from "../../http";
 import { Steps } from "../../pages/Group/Steps/Steps";
 import Badge from "../universal/Badge/Badge";
 import Button from "../universal/Button/Button";
+import { PreloadOverlay } from "../universal/PreloadOverlay/PreloadOverlay";
+import { ErrorStatus, LoadingStatus } from "../../models/Status";
 
 type CaseListItemProps = TestCase & {
     userUUID: string | null;
@@ -49,8 +51,7 @@ export const CaseListItem = ({ userUUID, onDelete, ...testCase }: CaseListItemPr
 
     const badges = [
         { label: "Автор", value: state.creator },
-        { label: "Дата создания", value: state.created_at },
-        { label: "Статус", value: state.status }
+        { label: "Дата создания", value: state.created_at }
     ];
 
     if (isCreatedByUser) {
@@ -98,9 +99,7 @@ export const CaseListItem = ({ userUUID, onDelete, ...testCase }: CaseListItemPr
             return;
         }
 
-        setIsStepsLoading(true);
         const response = await http.request<{ steps: Step[] }>("/test-cases/get-steps/" + state.uuid);
-        setIsStepsLoading(false);
 
         if (response.status === 200) {
             setSteps(response.body.steps);
@@ -121,36 +120,47 @@ export const CaseListItem = ({ userUUID, onDelete, ...testCase }: CaseListItemPr
         }
     }
 
+    let className = "card";
+    if (state.status === ErrorStatus) {
+        className += " error";
+        state.name = "При генерации тест-кейса произошла ошибка"
+    }
+
     return (
-        <div className="card display-flex flex-direction-column">
-            <h1>{state.name}</h1>
-            <div className="display-flex align-items-center justify-content-space-between">
+        <div className={className}>
+            {state.status === LoadingStatus &&
+                <PreloadOverlay/>
+            }
+            <div className="margin-bottom-1">
+                <div className="card-top display-flex align-items-center justify-content-space-between">
+                    <h1 className="card-heading"><span>{state.name}</span></h1>
+                    <div className="card-top-actions display-flex align-items-center">
+                        {isCreatedByUser &&
+                            <>
+                                {isDeleteConfirm
+                                    ? (
+                                        <>
+                                            <Button onClick={() => onDelete(state.uuid)} icon="delete_forever">Да, удалить!</Button>
+                                            <Button onClick={toggleDeleteConfirm}>Не удалять</Button>
+                                        </>
+                                    )
+                                    : <Button icon="delete" onClick={toggleDeleteConfirm} />
+                                }
+                            </>
+                        }
+
+                        {isExpanded
+                            ? <Button onClick={toggleExpand} icon="keyboard_arrow_up" />
+                            : <Button onClick={toggleExpand} icon="keyboard_arrow_down" />
+                        }
+                    </div>
+                </div>
                 <div className="display-flex align-items-center">
                     {badges.map((badge, i) => <Badge key={i} label={badge.label} value={badge.value} />)}
                 </div>
-                <div className="display-flex align-items-center">
-                    {isCreatedByUser &&
-                        <>
-                            {isDeleteConfirm
-                                ? (
-                                    <>
-                                        <Button onClick={() => onDelete(state.uuid)} icon="delete_forever">Да, удалить!</Button>
-                                        <Button onClick={toggleDeleteConfirm}>Не удалять</Button>
-                                    </>
-                                )
-                                : <Button icon="delete" onClick={toggleDeleteConfirm}>Удалить</Button>
-                            }
-                        </>
-                    }
-
-                    {isExpanded
-                        ? <Button onClick={toggleExpand} icon="collapse_content">Свернуть</Button>
-                        : <Button onClick={toggleExpand} icon="expand_content">Подробнее</Button>
-                    }
-                </div>
             </div>
             {isExpanded &&
-                <>
+                <div className="display-flex flex-direction-column">
                     <div>
                         <input
                             disabled={!isCreatedByUser}
@@ -213,7 +223,7 @@ export const CaseListItem = ({ userUUID, onDelete, ...testCase }: CaseListItemPr
                             steps={steps}
                         />
                     </div>
-                </>
+                </div>
             }
         </div>
     );

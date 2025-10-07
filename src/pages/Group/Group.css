@@ -1,10 +1,15 @@
 .group {
+    position: relative;
+    width: 1100px;
+    height: 100%;
     flex: 1 1 auto;
     overflow: auto;
 }
 
 .add-test-case {
-    flex: 1 1 auto;
-    position: sticky;
-    bottom: 0rem;
+    width: fit-content;
+    position: absolute;
+    bottom: 1rem;
+    right: 2rem;
 }
+

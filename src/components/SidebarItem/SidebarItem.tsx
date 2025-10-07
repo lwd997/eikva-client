@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "../universal/Button/Button";
+import { Tooltip } from "react-tooltip";
 
 interface SidebarItemProps {
     title: string;
@@ -20,6 +21,14 @@ enum Action {
     None
 }
 
+const tooltip = (content: string, id: string) => {
+    return {
+        "data-tooltip-content": content,
+        "data-tooltip-id": id,
+        "data-tooltip-placer": "top",
+    }
+}
+
 export const SidebarItem = ({
     title,
     uuid,
@@ -33,7 +42,14 @@ export const SidebarItem = ({
     const [action, setAction] = useState<Action>(Action.None);
     const [nextName, setNextName] = useState(title);
     const [isHovered, setIsHovered] = useState(false);
+    const itemRef = useRef<HTMLDivElement | null>(null);
     const isAction = action !== Action.None;
+
+    useLayoutEffect(() => {
+        if (isActive && itemRef.current) {
+            itemRef.current.scrollIntoView()
+        }
+    }, [itemRef.current]);
 
     const cancelAction = () => {
         setNextName(title);
@@ -63,6 +79,7 @@ export const SidebarItem = ({
 
     return (
         <div
+            ref={itemRef}
             className={entryClassName}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
@@ -82,10 +99,11 @@ export const SidebarItem = ({
                     {!isAction && <Button icon="download" className="button-small" onClick={() => setAction(Action.Export)} />}
                     {action === Action.Export &&
                         <>
-                            <Button icon="table" className="button-small" onClick={() => confirmExport("excel")} />
-                            <Button icon="data_object" className="button-small" onClick={() => confirmExport("zephyr")} />
+                            <Button {...tooltip("xlsx", "xlsx")}  icon="table" className="button-small" onClick={() => confirmExport("excel")} />
+                            <Button {...tooltip("zephyr", "zephyr")} icon="data_object" className="button-small" onClick={() => confirmExport("zephyr")} />
                             <Button icon="close" className="button-small" onClick={cancelAction} />
-
+                            <Tooltip id="xlsx" />
+                            <Tooltip id="zephyr" />
                         </>
                     }
 

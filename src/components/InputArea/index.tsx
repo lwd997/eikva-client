@@ -5,7 +5,7 @@ import { http } from "../../http";
 import { useDropzone } from "react-dropzone";
 import Icon from "../universal/Icon/Icon";
 import type { UploadedFile } from "../../models/File";
-import { FileElement, FileElementSelected } from "./File";
+import { FileElement } from "./File";
 import "./InputArea.css";
 
 interface InputAreaPorps {
@@ -17,15 +17,15 @@ interface InputAreaPorps {
 export const InputArea = ({ addTestCases, testCaseGroupUUID, currentUserUUID }: InputAreaPorps) => {
     const [textInput, setTextInput] = useState("");
     const [fileList, setFileList] = useState<UploadedFile[]>([]);
-    const [selectedFileList, setSelectedFileList] = useState<UploadedFile[]>([]);
+    const [selectedFileList, setSelectedFileList] = useState<string[]>([]);
     const [isHidden, setIsHidden] = useState(true);
     const [outputCount, setOutputCount] = useState(5);
     const [preview, setPreview] = useState("");
 
     useEffect(() => {
         const listener = async (e: CustomEvent<string[]>) => {
-
             const localUUIDs = e.detail.filter((el) => fileList.some((f) => f.uuid === el));
+
             if (localUUIDs.length) {
                 const updates = await Promise.all(localUUIDs.map(getFileInfo));
 
@@ -44,7 +44,6 @@ export const InputArea = ({ addTestCases, testCaseGroupUUID, currentUserUUID }: 
         return () => {
             window.removeEventListener('upload-update', listener);
         }
-
     }, [fileList]);
 
     useEffect(() => {
@@ -68,13 +67,11 @@ export const InputArea = ({ addTestCases, testCaseGroupUUID, currentUserUUID }: 
     });
 
     const selectFileForRequest = (f: UploadedFile) => {
-        if (!selectedFileList.some((s) => s.uuid === f.uuid)) {
-            setSelectedFileList([...selectedFileList, f]);
+        if (!selectedFileList.includes(f.uuid)) {
+            setSelectedFileList([...selectedFileList, f.uuid]);
+        } else {
+            setSelectedFileList(selectedFileList.filter((s) => s !== f.uuid));
         }
-    }
-
-    const removeSelectedFile = (uuid: string) => {
-        setSelectedFileList(selectedFileList.filter((f) => f.uuid !== uuid));
     }
 
     const getGroupFiles = async () => {
@@ -152,7 +149,7 @@ export const InputArea = ({ addTestCases, testCaseGroupUUID, currentUserUUID }: 
             body: {
                 amount: outputCount,
                 user_input: textInput,
-                files: selectedFileList.map((el) => el.uuid),
+                files: selectedFileList,
                 test_case_group: testCaseGroupUUID
             }
         });
@@ -163,6 +160,7 @@ export const InputArea = ({ addTestCases, testCaseGroupUUID, currentUserUUID }: 
     };
 
     const compressFile = (uuid: string) => {
+        setSelectedFileList(selectedFileList.filter((s) => s !== uuid));
         http.request("/uploads/compress", {
             method: "POST",
             body: { uuid }
@@ -171,6 +169,20 @@ export const InputArea = ({ addTestCases, testCaseGroupUUID, currentUserUUID }: 
 
     const toggleIsHidden = () => setIsHidden(!isHidden);
 
+    const outputCountPlus = () => {
+        const next = outputCount + 1;
+        if (next <= 10) {
+            setOutputCount(next);
+        }
+    }
+
+    const outputCountMinus = () => {
+        const next = outputCount - 1;
+        if (next > 0) {
+            setOutputCount(next);
+        }
+    }
+
     if (isHidden) {
         return (
             <div className="show-input-area-container">
@@ -178,7 +190,9 @@ export const InputArea = ({ addTestCases, testCaseGroupUUID, currentUserUUID }: 
                     icon="keyboard_double_arrow_up"
                     className="show-input-area-button"
                     onClick={toggleIsHidden}
-                />
+                >
+                    {isHidden && "Рабочая панель"}
+                </Button>
             </div>
         );
     }
@@ -202,7 +216,7 @@ export const InputArea = ({ addTestCases, testCaseGroupUUID, currentUserUUID }: 
                     <div className="file-panel">
                         {fileList.length < 1
                             ? (
-                                <div className="width-100 text-align-center">
+                                <div className="width-100">
                                     <Icon name="attach_file_add" />
                                     Перетащите файлы сюда или нажмите для выбора
                                 </div>
@@ -210,6 +224,7 @@ export const InputArea = ({ addTestCases, testCaseGroupUUID, currentUserUUID }: 
                             : fileList.map((f) => (
                                 <FileElement
                                     key={f.uuid}
+                                    isSeltected={selectedFileList.includes(f.uuid)}
                                     currentUserUUID={currentUserUUID}
                                     onSelect={selectFileForRequest}
                                     onCompress={compressFile}
@@ -232,27 +247,13 @@ export const InputArea = ({ addTestCases, testCaseGroupUUID, currentUserUUID }: 
             <div className="display-flex align-items-center justify-content-space-between">
                 <div className="display-flex align-items-center justify-content-start">
                     <Button className="hide-input-area-button" icon="keyboard_double_arrow_down" onClick={toggleIsHidden} />
-                    {selectedFileList.map((f) => (
-                        <FileElementSelected
-                            key={f.uuid}
-                            onDelete={removeSelectedFile}
-                            {...f}
-                        />
-                    ))}
-
                 </div>
 
                 <div className="display-flex align-items-center justify-content-end">
                     <div className="display-flex align-items-center">
-                        <div>{outputCount}</div>
-                        <input
-                            min="1"
-                            max="10"
-                            type="range"
-                            className="glass-range"
-                            value={outputCount}
-                            onChange={(e) => setOutputCount(+e.target.value)}
-                        />
+                        <div>Кол-во тест-кейсов: {outputCount}</div>
+                        <Button onClick={outputCountMinus} className="text">- 1</Button>
+                        <Button onClick={outputCountPlus} className="text">+ 1</Button>
                     </div>
                     <Button onClick={generate}>
                         Начать герерацию

@@ -1,8 +1,10 @@
+import type { Status } from "./Status";
+
 export interface TestCaseGroup {
     id: number;
     uuid: string;
     name: string;
-    status: string;
+    status: Status;
     creator: string;
     creator_uuid: string;
 }
@@ -14,7 +16,7 @@ export interface TestCase {
     creator: string;
     creator_uuid: string;
     test_case_group: string;
-    status: string;
+    status: Status;
     name: string;
     pre_condition: string;
     post_condition: string;
@@ -39,7 +41,7 @@ export interface Step {
     creator_uuid: string;
     test_case: string;
     created_at: string;
-    status: string;
+    status: Status;
     data: string;
     description: string;
     expected_result: string;

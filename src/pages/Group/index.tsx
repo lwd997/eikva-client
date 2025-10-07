@@ -85,15 +85,13 @@ export const Group = () => {
                         {...tc}
                     />
                 ))}
-                <div className="add-test-case display-flex justify-content-end">
-                    <Button icon="add" onClick={addTestCase}>Добавить новый тест-кейс</Button>
-                </div>
             </div>
             <InputArea
                 currentUserUUID={userUUID!}
                 addTestCases={addManyTestCases}
                 testCaseGroupUUID={group}
             />
+            <Button className="add-test-case" icon="add" onClick={addTestCase}>Добавить новый тест-кейс</Button>
         </>
     );
 }
